@@ -1,17 +1,14 @@
+apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.android.library'
+
 
 android {
     compileSdkVersion 28
-
     defaultConfig {
         minSdkVersion 5
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-    }
-    buildTypes {
-        release { }
-        debug { }
     }
 }
 
