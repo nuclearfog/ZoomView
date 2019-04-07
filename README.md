@@ -1,6 +1,7 @@
 # ZoomView
 
-Simple move & zoom Images in Android
+Simple zoom images in android
 
-Project Integration:
-https://jitpack.io/#NudeDude/ZoomView/1.0.1
+JitPack project integration:
+
+[![](https://jitpack.io/v/NudeDude/ZoomView.svg)](https://jitpack.io/#NudeDude/ZoomView)
