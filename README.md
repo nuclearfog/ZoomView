@@ -1,11 +1,14 @@
 <p align="center"><img src="/logo/logotype-horizontal.png"></p>
 
 
-Simple zoom images in android
+zoomable android ImageView
+simply move & zoom images with gestures
+
 
 JitPack project integration:
 
-[![](https://jitpack.io/v/NudeDude/ZoomView.svg)](https://jitpack.io/#NudeDude/ZoomView)
+[![](https://jitpack.io/v/nuclearfog/ZoomView.svg)](https://jitpack.io/#nuclearfog/ZoomView)
+
 
 
 Example:
@@ -30,3 +33,5 @@ Notes:
 - SVG images are not supported
 - wrap_content is not supported
 - high resolutions may lead to lag
+
+logo design by <a href="https://github.com/Tobaloidee" title="">@Tobaloidee</a>
