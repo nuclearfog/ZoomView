@@ -17,12 +17,19 @@ import static android.view.MotionEvent.ACTION_UP;
 @RemoteView
 public class ZoomView extends ImageView {
 
-    private static final float MAX = 2.0f;
-    private static final float MIN = 0.2f;
+    // Default values
+    private static final float DEF_MAX_ZOOM_IN = 0.5f;
+    private static final float DEF_MAX_ZOOM_OUT = 3.0f;
+    private static final boolean DEF_ENABLE_MOVE = true;
 
+    // Layout Attributes
+    private float max_zoom_in = DEF_MAX_ZOOM_IN;
+    private float max_zoom_out = DEF_MAX_ZOOM_OUT;
+    private boolean enableMove = DEF_ENABLE_MOVE;
+
+    // intern flags
     private PointF pos = new PointF(0.0f, 0.0f);
     private PointF dist = new PointF(0.0f, 0.0f);
-
     private boolean moveLock = false;
 
 
@@ -30,12 +37,16 @@ public class ZoomView extends ImageView {
         super(context);
     }
 
+
     public ZoomView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setAttributes(attrs);
     }
+
 
     public ZoomView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        setAttributes(attrs);
     }
 
 
@@ -51,14 +62,12 @@ public class ZoomView extends ImageView {
         if (getScaleType() != ScaleType.MATRIX)
             setScaleType(ScaleType.MATRIX);
 
-        if (event.getPointerCount() == 1) {
-
+        if (event.getPointerCount() == 1 && enableMove) {
             // start first Touch
             if (event.getAction() == ACTION_DOWN) {
                 pos.set(event.getX(), event.getY());
                 return true;
             }
-
             // Move finger
             if (event.getAction() == ACTION_MOVE && !moveLock) {
                 Matrix m = new Matrix(getImageMatrix());
@@ -67,14 +76,11 @@ public class ZoomView extends ImageView {
                 apply(m);
                 return true;
             }
-
             // Action stop
             if (event.getAction() == ACTION_UP) {
                 moveLock = false;
             }
-
         } else if (event.getPointerCount() == 2) {
-
             // start 2 Finger Touch
             if ((event.getAction() & MotionEvent.ACTION_MASK) == ACTION_POINTER_DOWN) {
                 float distX = event.getX(0) - event.getX(1);
@@ -110,6 +116,72 @@ public class ZoomView extends ImageView {
     public void reset() {
         setScaleType(ScaleType.CENTER_CROP);
     }
+
+
+    /**
+     * return if image is movable
+     *
+     * @return if image is movable
+     */
+    public boolean isMovable() {
+        return enableMove;
+    }
+
+
+    /**
+     * set Image movable
+     *
+     * @param enableMove set image movable
+     */
+    public void setMovable(boolean enableMove) {
+        this.enableMove = enableMove;
+    }
+
+
+    /**
+     * get maximum zoom in
+     *
+     * @return maximum zoom value
+     */
+    public float getMaxZoomIn() {
+        return max_zoom_in;
+    }
+
+
+    /**
+     * set maximum zoom in
+     *
+     * @param max_zoom_in maximum zoom value
+     */
+    public void setMaxZoomIn(float max_zoom_in) {
+        if (max_zoom_in < 1.0f)
+            throw new AssertionError("value should be more 1.0!");
+        this.max_zoom_in = max_zoom_in;
+    }
+
+
+    /**
+     * get maximum zoom in
+     *
+     * @return maximum zoom value
+     */
+    public float getMaxZoomOut() {
+        return max_zoom_out;
+    }
+
+
+    /**
+     * set maximum zoom in
+     *
+     * @param max_zoom_out maximum zoom value
+     */
+    public void setMaxZoomOut(float max_zoom_out) {
+        if (max_zoom_out < 1.0f)
+            throw new AssertionError("value should be less 1.0!");
+        this.max_zoom_out = max_zoom_out;
+    }
+
+
 
 
     /**
@@ -157,10 +229,26 @@ public class ZoomView extends ImageView {
                 m.postTranslate(0, topBorder);      // clamp to top border
         }
 
-        if (scale > MAX)                                // scale limit exceeded?
-            m.postScale(MAX / scale, MAX / scale, getWidth() / 2.0f, getHeight() / 2.0f);  // undo scale setting
-        else if (scale < MIN)
-            m.postScale(MIN / scale, MIN / scale, getWidth() / 2.0f, getHeight() / 2.0f);  // undo scale setting
+        if (scale > max_zoom_in)                        // scale limit exceeded?
+            m.postScale(max_zoom_in / scale, max_zoom_in / scale, getWidth() / 2.0f, getHeight() / 2.0f);    // undo scale setting
+        else if (scale < max_zoom_out)
+            m.postScale(max_zoom_out / scale, max_zoom_out / scale, getWidth() / 2.0f, getHeight() / 2.0f);  // undo scale setting
         setImageMatrix(m);                              // set Image matrix
+    }
+
+
+    /**
+     * Get attributes
+     *
+     * @param attrs set of attributes
+     */
+    private void setAttributes(AttributeSet attrs) {
+        if (attrs != null) {
+            setMaxZoomIn(attrs.getAttributeFloatValue(0, DEF_MAX_ZOOM_IN));
+            setMaxZoomOut(max_zoom_out = attrs.getAttributeFloatValue(1, DEF_MAX_ZOOM_OUT));
+            setMovable(attrs.getAttributeBooleanValue(2, DEF_ENABLE_MOVE));
+        }
+        if (max_zoom_out < 1.0f || max_zoom_in > 1.0f)
+            throw new AssertionError("Attribute error!");
     }
 }

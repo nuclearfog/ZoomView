@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ZoomView">
+        <attr name="max_zoom_in" format="float" />
+        <attr name="max_zoom_out" format="float" />
+        <attr name="enable_move" format="boolean" />
+    </declare-styleable>
+</resources>
