@@ -1,6 +1,7 @@
 package org.nuclearfog.zoomview;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
@@ -40,13 +41,13 @@ public class ZoomView extends ImageView {
 
     public ZoomView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setAttributes(attrs);
+        setAttributes(context, attrs);
     }
 
 
     public ZoomView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        setAttributes(attrs);
+        setAttributes(context, attrs);
     }
 
 
@@ -58,10 +59,8 @@ public class ZoomView extends ImageView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
         if (getScaleType() != ScaleType.MATRIX)
             setScaleType(ScaleType.MATRIX);
-
         if (event.getPointerCount() == 1 && enableMove) {
             // start first Touch
             if (event.getAction() == ACTION_DOWN) {
@@ -91,7 +90,6 @@ public class ZoomView extends ImageView {
                 moveLock = true;
                 return true;
             }
-
             // 2 Finger move
             if (event.getAction() == ACTION_MOVE) {
                 float distX = event.getX(0) - event.getX(1);
@@ -182,8 +180,6 @@ public class ZoomView extends ImageView {
     }
 
 
-
-
     /**
      * Apply image matrix
      * Limit translation and focus
@@ -240,15 +236,19 @@ public class ZoomView extends ImageView {
     /**
      * Get attributes
      *
+     * @param context View context
      * @param attrs set of attributes
      */
-    private void setAttributes(AttributeSet attrs) {
+    private void setAttributes(Context context, AttributeSet attrs) {
         if (attrs != null) {
-            setMaxZoomIn(attrs.getAttributeFloatValue(0, DEF_MAX_ZOOM_IN));
-            setMaxZoomOut(max_zoom_out = attrs.getAttributeFloatValue(1, DEF_MAX_ZOOM_OUT));
-            setMovable(attrs.getAttributeBooleanValue(2, DEF_ENABLE_MOVE));
+            TypedArray attrArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ZoomView, 0, 0);
+            try {
+                setMaxZoomIn(attrArray.getFloat(R.styleable.ZoomView_max_zoom_in, DEF_MAX_ZOOM_IN));
+                setMaxZoomOut(attrArray.getFloat(R.styleable.ZoomView_max_zoom_out, DEF_MAX_ZOOM_OUT));
+                setMovable(attrArray.getBoolean(R.styleable.ZoomView_enable_move, DEF_ENABLE_MOVE));
+            } finally {
+                attrArray.recycle();
+            }
         }
-        if (max_zoom_out < 1.0f || max_zoom_in > 1.0f)
-            throw new AssertionError("Attribute error!");
     }
 }
