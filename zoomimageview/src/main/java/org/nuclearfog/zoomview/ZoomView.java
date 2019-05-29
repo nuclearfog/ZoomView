@@ -61,14 +61,14 @@ public class ZoomView extends ImageView {
     public boolean onTouchEvent(MotionEvent event) {
         if (getScaleType() != ScaleType.MATRIX)
             setScaleType(ScaleType.MATRIX);
-        if (event.getPointerCount() == 1 && enableMove) {
+        if (event.getPointerCount() == 1) {
             if (event.getAction() == ACTION_UP) {           // start first Touch
                 moveLock = false;
             } else if (event.getAction() == ACTION_DOWN) {
                 pos.set(event.getX(), event.getY());
-            } else if (event.getAction() == ACTION_MOVE) {
+            } else if (event.getAction() == ACTION_MOVE && enableMove) {
                 if (moveLock)
-                    return false;
+                    return super.performClick();
                 Matrix m = new Matrix(getImageMatrix());
                 m.postTranslate(event.getX() - pos.x, event.getY() - pos.y);
                 pos.set(event.getX(), event.getY());
@@ -91,7 +91,7 @@ public class ZoomView extends ImageView {
                 apply(m);
             }
         }
-        return super.performClick();
+        return true;
     }
 
 
