@@ -62,46 +62,33 @@ public class ZoomView extends ImageView {
         if (getScaleType() != ScaleType.MATRIX)
             setScaleType(ScaleType.MATRIX);
         if (event.getPointerCount() == 1 && enableMove) {
-            // start first Touch
-            if (event.getAction() == ACTION_DOWN) {
+            if (event.getAction() == ACTION_UP) {           // start first Touch
+                moveLock = false;
+            } else if (event.getAction() == ACTION_DOWN) {
                 pos.set(event.getX(), event.getY());
-                return true;
-            }
-            // Move finger
-            if (event.getAction() == ACTION_MOVE && !moveLock) {
+            } else if (event.getAction() == ACTION_MOVE) {
+                if (moveLock)
+                    return false;
                 Matrix m = new Matrix(getImageMatrix());
                 m.postTranslate(event.getX() - pos.x, event.getY() - pos.y);
                 pos.set(event.getX(), event.getY());
                 apply(m);
-                return true;
-            }
-            // Action stop
-            if (event.getAction() == ACTION_UP) {
-                moveLock = false;
             }
         } else if (event.getPointerCount() == 2) {
-            // start 2 Finger Touch
-            if ((event.getAction() & MotionEvent.ACTION_MASK) == ACTION_POINTER_DOWN) {
+            if (event.getAction() == ACTION_POINTER_DOWN) { // start 2 Finger Touch
                 float distX = event.getX(0) - event.getX(1);
                 float distY = event.getY(0) - event.getY(1);
-                // Distance vector
-                dist.set(distX, distY);
-
+                dist.set(distX, distY);                     // Distance vector
                 moveLock = true;
-                return true;
-            }
-            // 2 Finger move
-            if (event.getAction() == ACTION_MOVE) {
+            } else if (event.getAction() == ACTION_MOVE) {  // 2 Finger move
                 float distX = event.getX(0) - event.getX(1);
                 float distY = event.getY(0) - event.getY(1);
-
                 PointF current = new PointF(distX, distY);
                 float scale = current.length() / dist.length();
                 Matrix m = new Matrix(getImageMatrix());
                 m.postScale(scale, scale, getWidth() / 2.0f, getHeight() / 2.0f);
                 dist.set(distX, distY);
                 apply(m);
-                return true;
             }
         }
         return super.performClick();
@@ -219,7 +206,7 @@ public class ZoomView extends ImageView {
         if (scale > max_zoom_in) {                      // scale limit exceeded?
             float undoScale = max_zoom_in / scale;      // undo scale setting
             m.postScale(undoScale, undoScale, getWidth() / 2.0f, getHeight() / 2.0f);
-        } else if (scale < max_zoom_out) {               // scale limit exceeded?
+        } else if (scale < max_zoom_out) {              // scale limit exceeded?
             float undoScale = max_zoom_out / scale;     // undo scale setting
             m.postScale(undoScale, undoScale, getWidth() / 2.0f, getHeight() / 2.0f);
         }
