@@ -19,8 +19,8 @@ import static android.view.MotionEvent.ACTION_UP;
 public class ZoomView extends ImageView {
 
     // Default values
-    private static final float DEF_MAX_ZOOM_IN = 0.5f;
-    private static final float DEF_MAX_ZOOM_OUT = 3.0f;
+    private static final float DEF_MAX_ZOOM_IN = 3.0f;
+    private static final float DEF_MAX_ZOOM_OUT = 0.5f;
     private static final boolean DEF_ENABLE_MOVE = true;
 
     // Layout Attributes
