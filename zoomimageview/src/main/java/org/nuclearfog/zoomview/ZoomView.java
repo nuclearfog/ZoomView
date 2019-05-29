@@ -180,19 +180,12 @@ public class ZoomView extends ImageView {
     }
 
 
-    /**
-     * Apply image matrix
-     * Limit translation and focus
-     *
-     * @param m Image Matrix
-     */
     private void apply(Matrix m) {
-        float[] val = new float[9];
-        m.getValues(val);
-
         Drawable d = getDrawable();
         if (d == null) return;
 
+        float[] val = new float[9];
+        m.getValues(val);
         float scale = (val[Matrix.MSCALE_X] + val[Matrix.MSCALE_Y]) / 2;    // Scale factor
         float width = d.getIntrinsicWidth() * scale;                        // image width
         float height = d.getIntrinsicHeight() * scale;                      // image height
@@ -212,7 +205,6 @@ public class ZoomView extends ImageView {
             else
                 m.postTranslate(-leftBorder, 0);    // clamp to left border
         }
-
         if (height > getHeight()) {                     // is image height bigger than screen height?
             if (bottomBorder > 0)                       // is image on the bottom border?
                 m.postTranslate(0, -bottomBorder);  // clamp to bottom border
@@ -224,31 +216,24 @@ public class ZoomView extends ImageView {
             else
                 m.postTranslate(0, topBorder);      // clamp to top border
         }
-
-        if (scale > max_zoom_in)                        // scale limit exceeded?
-            m.postScale(max_zoom_in / scale, max_zoom_in / scale, getWidth() / 2.0f, getHeight() / 2.0f);    // undo scale setting
-        else if (scale < max_zoom_out)
-            m.postScale(max_zoom_out / scale, max_zoom_out / scale, getWidth() / 2.0f, getHeight() / 2.0f);  // undo scale setting
+        if (scale > max_zoom_in) {                      // scale limit exceeded?
+            float undoScale = max_zoom_in / scale;      // undo scale setting
+            m.postScale(undoScale, undoScale, getWidth() / 2.0f, getHeight() / 2.0f);
+        } else if (scale < max_zoom_out) {               // scale limit exceeded?
+            float undoScale = max_zoom_out / scale;     // undo scale setting
+            m.postScale(undoScale, undoScale, getWidth() / 2.0f, getHeight() / 2.0f);
+        }
         setImageMatrix(m);                              // set Image matrix
     }
 
 
-    /**
-     * Get attributes
-     *
-     * @param context View context
-     * @param attrs set of attributes
-     */
     private void setAttributes(Context context, AttributeSet attrs) {
         if (attrs != null) {
-            TypedArray attrArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ZoomView, 0, 0);
-            try {
-                setMaxZoomIn(attrArray.getFloat(R.styleable.ZoomView_max_zoom_in, DEF_MAX_ZOOM_IN));
-                setMaxZoomOut(attrArray.getFloat(R.styleable.ZoomView_max_zoom_out, DEF_MAX_ZOOM_OUT));
-                setMovable(attrArray.getBoolean(R.styleable.ZoomView_enable_move, DEF_ENABLE_MOVE));
-            } finally {
-                attrArray.recycle();
-            }
+            TypedArray attrArray = context.obtainStyledAttributes(attrs, R.styleable.ZoomView);
+            setMaxZoomIn(attrArray.getFloat(R.styleable.ZoomView_max_zoom_in, DEF_MAX_ZOOM_IN));
+            setMaxZoomOut(attrArray.getFloat(R.styleable.ZoomView_max_zoom_out, DEF_MAX_ZOOM_OUT));
+            setMovable(attrArray.getBoolean(R.styleable.ZoomView_enable_move, DEF_ENABLE_MOVE));
+            attrArray.recycle();
         }
     }
 }
