@@ -152,7 +152,7 @@ public class ZoomView extends ImageView {
      * @param max_zoom_in maximum zoom value
      */
     public void setMaxZoomIn(float max_zoom_in) {
-        if (max_zoom_in > 1.0f)
+        if (max_zoom_in < 1.0f)
             throw new AssertionError("value should be more 1.0!");
         this.max_zoom_in = max_zoom_in;
     }
@@ -174,7 +174,7 @@ public class ZoomView extends ImageView {
      * @param max_zoom_out maximum zoom value
      */
     public void setMaxZoomOut(float max_zoom_out) {
-        if (max_zoom_out < 1.0f)
+        if (max_zoom_out > 1.0f)
             throw new AssertionError("value should be less 1.0!");
         this.max_zoom_out = max_zoom_out;
     }
