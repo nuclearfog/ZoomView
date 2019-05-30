@@ -13,7 +13,6 @@ import android.widget.RemoteViews.RemoteView;
 import static android.view.MotionEvent.ACTION_DOWN;
 import static android.view.MotionEvent.ACTION_MOVE;
 import static android.view.MotionEvent.ACTION_POINTER_DOWN;
-import static android.view.MotionEvent.ACTION_POINTER_INDEX_MASK;
 import static android.view.MotionEvent.ACTION_POINTER_UP;
 import static android.view.MotionEvent.ACTION_UP;
 
@@ -88,7 +87,7 @@ public class ZoomView extends ImageView {
             }
         } else if (event.getPointerCount() == 2) {
             float distX, distY, scale;
-            switch (event.getAction() & ACTION_POINTER_INDEX_MASK) {
+            switch (event.getActionMasked()) {
                 case ACTION_POINTER_UP:
                 case ACTION_POINTER_DOWN:
                     distX = event.getX(0) - event.getX(1);
@@ -97,17 +96,15 @@ public class ZoomView extends ImageView {
                     moveLock = true;
                     break;
 
-                default:
-                    if (event.getAction() == ACTION_MOVE) {
-                        distX = event.getX(0) - event.getX(1);
-                        distY = event.getY(0) - event.getY(1);
-                        PointF current = new PointF(distX, distY);
-                        scale = current.length() / dist.length();
-                        Matrix m = new Matrix(getImageMatrix());
-                        m.postScale(scale, scale, getWidth() / 2.0f, getHeight() / 2.0f);
-                        dist.set(distX, distY);
-                        apply(m);
-                    }
+                case ACTION_MOVE:
+                    distX = event.getX(0) - event.getX(1);
+                    distY = event.getY(0) - event.getY(1);
+                    PointF current = new PointF(distX, distY);
+                    scale = current.length() / dist.length();
+                    Matrix m = new Matrix(getImageMatrix());
+                    m.postScale(scale, scale, getWidth() / 2.0f, getHeight() / 2.0f);
+                    dist.set(distX, distY);
+                    apply(m);
                     break;
             }
         }
