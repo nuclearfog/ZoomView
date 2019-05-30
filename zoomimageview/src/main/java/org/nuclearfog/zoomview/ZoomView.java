@@ -75,7 +75,7 @@ public class ZoomView extends ImageView {
                     break;
 
                 case ACTION_MOVE:
-                    if (moveLock && enableMove)
+                    if (moveLock || !enableMove)
                         return super.performClick();
                     float posX = event.getX() - pos.x;
                     float posY = event.getY() - pos.y;
