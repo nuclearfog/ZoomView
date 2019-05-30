@@ -62,33 +62,54 @@ public class ZoomView extends ImageView {
         if (getScaleType() != ScaleType.MATRIX)
             setScaleType(ScaleType.MATRIX);
         if (event.getPointerCount() == 1) {
-            if (event.getAction() == ACTION_UP) {           // start first Touch
-                moveLock = false;
-            } else if (event.getAction() == ACTION_DOWN) {
-                pos.set(event.getX(), event.getY());
-            } else if (event.getAction() == ACTION_MOVE && enableMove) {
-                if (moveLock)
-                    return super.performClick();
-                Matrix m = new Matrix(getImageMatrix());
-                m.postTranslate(event.getX() - pos.x, event.getY() - pos.y);
-                pos.set(event.getX(), event.getY());
-                apply(m);
+
+            switch (event.getAction()) {
+                case ACTION_UP:
+                    pos.set(event.getX(), event.getY());
+                    moveLock = false;
+                    break;
+
+                case ACTION_DOWN:
+                    pos.set(event.getX(), event.getY());
+                    break;
+
+                case ACTION_MOVE:
+                    if (moveLock && enableMove)
+                        return super.performClick();
+                    float posX = event.getX() - pos.x;
+                    float posY = event.getY() - pos.y;
+                    pos.set(event.getX(), event.getY());
+                    Matrix m = new Matrix(getImageMatrix());
+                    m.postTranslate(posX, posY);
+                    apply(m);
+                    break;
             }
         } else if (event.getPointerCount() == 2) {
-            if (event.getAction() == ACTION_POINTER_DOWN) { // start 2 Finger Touch
-                float distX = event.getX(0) - event.getX(1);
-                float distY = event.getY(0) - event.getY(1);
-                dist.set(distX, distY);                     // Distance vector
-                moveLock = true;
-            } else if (event.getAction() == ACTION_MOVE) {  // 2 Finger move
-                float distX = event.getX(0) - event.getX(1);
-                float distY = event.getY(0) - event.getY(1);
-                PointF current = new PointF(distX, distY);
-                float scale = current.length() / dist.length();
-                Matrix m = new Matrix(getImageMatrix());
-                m.postScale(scale, scale, getWidth() / 2.0f, getHeight() / 2.0f);
-                dist.set(distX, distY);
-                apply(m);
+            float distX, distY, scale;
+            switch (event.getAction()) {
+                case ACTION_UP:
+                    distX = event.getX(0) - event.getX(1);
+                    distY = event.getY(0) - event.getY(1);
+                    dist.set(distX, distY);                     // Distance vector
+                    break;
+
+                case ACTION_POINTER_DOWN:
+                    distX = event.getX(0) - event.getX(1);
+                    distY = event.getY(0) - event.getY(1);
+                    dist.set(distX, distY);                     // Distance vector
+                    moveLock = true;
+                    break;
+
+                case ACTION_MOVE:
+                    distX = event.getX(0) - event.getX(1);
+                    distY = event.getY(0) - event.getY(1);
+                    PointF current = new PointF(distX, distY);
+                    scale = current.length() / dist.length();
+                    Matrix m = new Matrix(getImageMatrix());
+                    m.postScale(scale, scale, getWidth() / 2.0f, getHeight() / 2.0f);
+                    dist.set(distX, distY);
+                    apply(m);
+                    break;
             }
         }
         return true;
