@@ -93,6 +93,7 @@ public class ZoomView extends ImageView {
                     dist.set(distX, distY);                     // Distance vector
                     break;
 
+                case ACTION_DOWN:
                 case ACTION_POINTER_DOWN:
                     distX = event.getX(0) - event.getX(1);
                     distY = event.getY(0) - event.getY(1);
