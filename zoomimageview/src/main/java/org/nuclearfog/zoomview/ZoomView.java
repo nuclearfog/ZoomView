@@ -16,6 +16,9 @@ import static android.view.MotionEvent.ACTION_POINTER_DOWN;
 import static android.view.MotionEvent.ACTION_POINTER_UP;
 import static android.view.MotionEvent.ACTION_UP;
 
+/**
+ * @author nuclearfog
+ */
 @RemoteView
 public class ZoomView extends ImageView {
 
@@ -30,8 +33,8 @@ public class ZoomView extends ImageView {
     private boolean enableMove = DEF_ENABLE_MOVE;
 
     // intern flags
-    private PointF pos = new PointF(0.0f, 0.0f);
-    private PointF dist = new PointF(0.0f, 0.0f);
+    private final PointF pos = new PointF(0.0f, 0.0f);
+    private final PointF dist = new PointF(0.0f, 0.0f);
     private boolean moveLock = false;
 
 
@@ -41,8 +44,7 @@ public class ZoomView extends ImageView {
 
 
     public ZoomView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        setAttributes(context, attrs);
+        this(context, attrs, 0);
     }
 
 
@@ -200,25 +202,25 @@ public class ZoomView extends ImageView {
 
         if (width > getWidth()) {                       // is image width bigger than screen width?
             if (rightBorder > 0)                        // is image on the right border?
-                m.postTranslate(rightBorder, 0);    // clamp to right border
+                m.postTranslate(rightBorder, 0);        // clamp to right border
             else if (leftBorder > 0)
-                m.postTranslate(-leftBorder, 0);    // clamp to left order
+                m.postTranslate(-leftBorder, 0);        // clamp to left order
         } else if (leftBorder < 0 ^ rightBorder < 0) {  // does image clash with one border?
             if (rightBorder < 0)
-                m.postTranslate(rightBorder, 0);    // clamp to right border
+                m.postTranslate(rightBorder, 0);        // clamp to right border
             else
-                m.postTranslate(-leftBorder, 0);    // clamp to left border
+                m.postTranslate(-leftBorder, 0);        // clamp to left border
         }
         if (height > getHeight()) {                     // is image height bigger than screen height?
             if (bottomBorder > 0)                       // is image on the bottom border?
-                m.postTranslate(0, -bottomBorder);  // clamp to bottom border
+                m.postTranslate(0, -bottomBorder);      // clamp to bottom border
             else if (topBorder > 0)                     // is image on the top border?
-                m.postTranslate(0, topBorder);      // clamp to top border
+                m.postTranslate(0, topBorder);          // clamp to top border
         } else if (topBorder < 0 ^ bottomBorder < 0) {  // does image clash with one border?
             if (bottomBorder < 0)
-                m.postTranslate(0, -bottomBorder);  // clamp to bottom border
+                m.postTranslate(0, -bottomBorder);      // clamp to bottom border
             else
-                m.postTranslate(0, topBorder);      // clamp to top border
+                m.postTranslate(0, topBorder);          // clamp to top border
         }
         if (scale > max_zoom_in) {                      // scale limit exceeded?
             float undoScale = max_zoom_in / scale;      // undo scale setting
