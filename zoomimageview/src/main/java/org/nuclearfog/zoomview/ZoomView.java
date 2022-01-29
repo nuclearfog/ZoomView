@@ -118,7 +118,7 @@ public class ZoomView extends ImageView {
      * Reset Image position/zoom to default
      */
     public void reset() {
-        setScaleType(ScaleType.CENTER_CROP);
+        setScaleType(getScaleType());
     }
 
 
