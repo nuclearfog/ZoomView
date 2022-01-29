@@ -10,11 +10,7 @@ import android.view.MotionEvent;
 import android.widget.ImageView;
 import android.widget.RemoteViews.RemoteView;
 
-import static android.view.MotionEvent.ACTION_DOWN;
-import static android.view.MotionEvent.ACTION_MOVE;
-import static android.view.MotionEvent.ACTION_POINTER_DOWN;
-import static android.view.MotionEvent.ACTION_POINTER_UP;
-import static android.view.MotionEvent.ACTION_UP;
+import static android.view.MotionEvent.*;
 
 /**
  * @author nuclearfog
@@ -26,11 +22,13 @@ public class ZoomView extends ImageView {
     private static final float DEF_MAX_ZOOM_IN = 3.0f;
     private static final float DEF_MAX_ZOOM_OUT = 0.5f;
     private static final boolean DEF_ENABLE_MOVE = true;
+    private static final ScaleType DEF_SCALE_TYPE = ScaleType.FIT_CENTER;
 
     // Layout Attributes
     private float max_zoom_in = DEF_MAX_ZOOM_IN;
     private float max_zoom_out = DEF_MAX_ZOOM_OUT;
     private boolean enableMove = DEF_ENABLE_MOVE;
+    private ScaleType scaleType = DEF_SCALE_TYPE;
 
     // intern flags
     private final PointF pos = new PointF(0.0f, 0.0f);
@@ -50,7 +48,14 @@ public class ZoomView extends ImageView {
 
     public ZoomView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        setAttributes(context, attrs);
+        scaleType = getScaleType();
+        if (attrs != null) {
+            TypedArray attrArray = context.obtainStyledAttributes(attrs, R.styleable.ZoomView);
+            setMaxZoomIn(attrArray.getFloat(R.styleable.ZoomView_max_zoom_in, DEF_MAX_ZOOM_IN));
+            setMaxZoomOut(attrArray.getFloat(R.styleable.ZoomView_max_zoom_out, DEF_MAX_ZOOM_OUT));
+            setMovable(attrArray.getBoolean(R.styleable.ZoomView_enable_move, DEF_ENABLE_MOVE));
+            attrArray.recycle();
+        }
     }
 
 
@@ -118,7 +123,7 @@ public class ZoomView extends ImageView {
      * Reset Image position/zoom to default
      */
     public void reset() {
-        setScaleType(getScaleType());
+        setScaleType(scaleType);
     }
 
 
@@ -230,16 +235,5 @@ public class ZoomView extends ImageView {
             m.postScale(undoScale, undoScale, getWidth() / 2.0f, getHeight() / 2.0f);
         }
         setImageMatrix(m);                              // set Image matrix
-    }
-
-
-    private void setAttributes(Context context, AttributeSet attrs) {
-        if (attrs != null) {
-            TypedArray attrArray = context.obtainStyledAttributes(attrs, R.styleable.ZoomView);
-            setMaxZoomIn(attrArray.getFloat(R.styleable.ZoomView_max_zoom_in, DEF_MAX_ZOOM_IN));
-            setMaxZoomOut(attrArray.getFloat(R.styleable.ZoomView_max_zoom_out, DEF_MAX_ZOOM_OUT));
-            setMovable(attrArray.getBoolean(R.styleable.ZoomView_enable_move, DEF_ENABLE_MOVE));
-            attrArray.recycle();
-        }
     }
 }
