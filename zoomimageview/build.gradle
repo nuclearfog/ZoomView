@@ -15,21 +15,25 @@ android {
             minifyEnabled false
         }
     }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 afterEvaluate {
     publishing {
         publications {
-            // Creates a Maven publication called "release".
             release(MavenPublication) {
                 from components.release
                 groupId 'com.github.nuclearfog'
                 artifactId 'ZoomView'
-                version '1.0.6'
+                version '1.0.4'
             }
         }
     }
 }
 
-dependencies {
-}
+dependencies { }
