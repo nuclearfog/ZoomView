@@ -10,18 +10,26 @@ android {
     defaultConfig {
         minSdkVersion 8
     }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
 }
-
-dependencies { }
 
 afterEvaluate {
     publishing {
         publications {
+            // Creates a Maven publication called "release".
             release(MavenPublication) {
+                from components.release
                 groupId 'com.github.nuclearfog'
                 artifactId 'ZoomView'
-                version '1.0.5'
+                version '1.0.6'
             }
         }
     }
+}
+
+dependencies {
 }
