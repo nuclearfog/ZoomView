@@ -4,21 +4,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
+    namespace 'org.nuclearfog.zoomview'
+    compileSdkVersion 34
+    buildToolsVersion '34.0.0'
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 31
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -28,10 +18,9 @@ afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
-                from components.release
                 groupId 'com.github.nuclearfog'
                 artifactId 'ZoomView'
-                version '1.0.4'
+                version '1.0.5'
             }
         }
     }
